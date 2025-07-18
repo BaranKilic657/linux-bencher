@@ -1,0 +1,398 @@
+- id: 1.1.1.1.a
+  description: "Ensure mounting of cramfs filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: modprobe
+      on_fail: na
+  module: cramfs
+  steps:
+    - type: shell
+      command: "modprobe -n -v cramfs"
+      expect:
+        expected_secure_patterns:
+          - "(?i)FATAL: Module cramfs not found"
+          - "(?i)not found in directory"
+          - "install /bin/true"
+        fail_patterns:
+          - "(?i)install /bin/false"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/cramfs.conf and add:
+      install cramfs /bin/true
+    Run: rmmod cramfs
+  scored: true
+
+- id: 1.1.1.1.b
+  description: "Ensure mounting of cramfs filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: lsmod
+      on_fail: na
+  module: cramfs
+  steps:
+    - type: shell
+      command: "lsmod | grep cramfs"
+      expect:
+        must_not_be_loaded: true
+        fail_patterns:
+          - "cramfs"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/cramfs.conf and add:
+      install cramfs /bin/true
+    Run: rmmod cramfs
+  scored: true
+
+- id: 1.1.1.2.a
+  description: "Ensure mounting of freevxfs filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: modprobe
+      on_fail: na
+  module: freevxfs
+  steps:
+    - type: shell
+      command: "modprobe -n -v freevxfs"
+      expect:
+        expected_secure_patterns:
+          - "(?i)FATAL: Module freevxfs not found"
+          - "(?i)not found in directory"
+          - "install /bin/true"
+        fail_patterns:
+          - "(?i)install /bin/false"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/freevxfs.conf and add:
+      install freevxfs /bin/true
+    Run: rmmod freevxfs
+  scored: true
+
+- id: 1.1.1.2.b
+  description: "Ensure mounting of freevxfs filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: lsmod
+      on_fail: na
+  module: freevxfs
+  steps:
+    - type: shell
+      command: "lsmod | grep freevxfs"
+      expect:
+        must_not_be_loaded: true
+        fail_patterns:
+          - "freevxfs"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/freevxfs.conf and add:
+      install freevxfs /bin/true
+    Run: rmmod freevxfs
+  scored: true
+
+- id: 1.1.1.3.a
+  description: "Ensure mounting of jffs2 filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: modprobe
+      on_fail: na
+  module: jffs2
+  steps:
+    - type: shell
+      command: "modprobe -n -v jffs2"
+      expect:
+        expected_secure_patterns:
+          - "(?i)FATAL: Module jffs2 not found"
+          - "(?i)not found in directory"
+          - "install /bin/true"
+        fail_patterns:
+          - "(?i)install /bin/false"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/jffs2.conf and add:
+      install jffs2 /bin/true
+    Run: rmmod jffs2
+  scored: true
+
+- id: 1.1.1.3.b
+  description: "Ensure mounting of jffs2 filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: lsmod
+      on_fail: na
+  module: jffs2
+  steps:
+    - type: shell
+      command: "lsmod | grep jffs2"
+      expect:
+        must_not_be_loaded: true
+        fail_patterns:
+          - "jffs2"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/jffs2.conf and add:
+      install jffs2 /bin/true
+    Run: rmmod jffs2
+  scored: true
+
+- id: 1.1.1.4.a
+  description: "Ensure mounting of hfs filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: modprobe
+      on_fail: na
+  module: hfs
+  steps:
+    - type: shell
+      command: "modprobe -n -v hfs"
+      expect:
+        expected_secure_patterns:
+          - "(?i)FATAL: Module hfs not found"
+          - "(?i)not found in directory"
+          - "install /bin/true"
+        fail_patterns:
+          - "(?i)install /bin/false"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/hfs.conf and add:
+      install hfs /bin/true
+    Run: rmmod hfs
+  scored: true
+
+- id: 1.1.1.4.b
+  description: "Ensure mounting of hfs filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: lsmod
+      on_fail: na
+  module: hfs
+  steps:
+    - type: shell
+      command: "lsmod | grep hfs"
+      expect:
+        must_not_be_loaded: true
+        fail_patterns:
+          - "hfs"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/hfs.conf and add:
+      install hfs /bin/true
+    Run: rmmod hfs
+  scored: true
+
+- id: 1.1.1.5.a
+  description: "Ensure mounting of hfsplus filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: modprobe
+      on_fail: na
+  module: hfsplus
+  steps:
+    - type: shell
+      command: "modprobe -n -v hfsplus"
+      expect:
+        expected_secure_patterns:
+          - "(?i)FATAL: Module hfsplus not found"
+          - "(?i)not found in directory"
+          - "install /bin/true"
+        fail_patterns:
+          - "(?i)install /bin/false"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/hfsplus.conf and add:
+      install hfsplus /bin/true
+    Run: rmmod hfsplus
+  scored: true
+
+- id: 1.1.1.5.b
+  description: "Ensure mounting of hfsplus filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: lsmod
+      on_fail: na
+  module: hfsplus
+  steps:
+    - type: shell
+      command: "lsmod | grep hfsplus"
+      expect:
+        must_not_be_loaded: true
+        fail_patterns:
+          - "hfsplus"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/hfsplus.conf and add:
+      install hfsplus /bin/true
+    Run: rmmod hfsplus
+  scored: true
+
+# squashfs and vfat: with sub_checks and constraints
+- id: 1.1.1.6.a
+  description: "Ensure mounting of squashfs filesystems is disabled"
+  checks:
+    - id: 1.1.1.6.a.1
+      constraints:
+        platform:
+          - rhel7
+      module: squashfs
+      steps:
+        - type: shell
+          command: "modprobe -n -v squashfs"
+          expect:
+            expected_secure_patterns:
+              - "(?i)FATAL: Module squashfs not found"
+              - "(?i)not found in directory"
+              - "install /bin/true"
+            fail_patterns:
+              - "(?i)install /bin/false"
+            on_secure: pass
+            on_insecure: fail
+      remediation: |
+        Edit or create /etc/modprobe.d/squashfs.conf and add:
+          install squashfs /bin/true
+        Run: rmmod squashfs
+      scored: true
+
+- id: 1.1.1.6.b
+  description: "Ensure mounting of squashfs filesystems is disabled"
+  checks:
+    - id: 1.1.1.6.b.1
+      constraints:
+        platform:
+          - rhel7
+      module: squashfs
+      steps:
+        - type: shell
+          command: "lsmod | grep squashfs"
+          expect:
+            must_not_be_loaded: true
+            fail_patterns:
+              - "squashfs"
+            on_secure: pass
+            on_insecure: fail
+      remediation: |
+        Edit or create /etc/modprobe.d/squashfs.conf and add:
+          install squashfs /bin/true
+        Run: rmmod squashfs
+      scored: true
+
+- id: 1.1.1.7.a
+  description: "Ensure mounting of udf filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: modprobe
+      on_fail: na
+  module: udf
+  steps:
+    - type: shell
+      command: "modprobe -n -v udf"
+      expect:
+        expected_secure_patterns:
+          - "(?i)FATAL: Module udf not found"
+          - "(?i)not found in directory"
+          - "install /bin/true"
+        fail_patterns:
+          - "(?i)install /bin/false"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/udf.conf and add:
+      install udf /bin/true
+    Run: rmmod udf
+  scored: true
+
+- id: 1.1.1.7.b
+  description: "Ensure mounting of udf filesystems is disabled"
+  prerequisites:
+    - type: binary_exists
+      binary: lsmod
+      on_fail: na
+  module: udf
+  steps:
+    - type: shell
+      command: "lsmod | grep udf"
+      expect:
+        must_not_be_loaded: true
+        fail_patterns:
+          - "udf"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/udf.conf and add:
+      install udf /bin/true
+    Run: rmmod udf
+  scored: true
+
+# 1.1.1.8: FAT/vfat filesystems, with a, b, c subchecks, including a manual check
+- id: 1.1.1.8.a
+  description: "Ensure mounting of FAT filesystems is disabled"
+  checks:
+    - id: 1.1.1.8.a.1
+      constraints:
+        platform:
+          - rhel7
+      steps:
+        - type: manual
+          command: "grep -i vfat /etc/fstab"
+          description: "Ensure vfat is not present in /etc/fstab"
+      remediation: |
+        Edit or create /etc/modprobe.d/vfat.conf and add:
+          install vfat /bin/true
+        Run: rmmod vfat
+      scored: false
+
+- id: 1.1.1.8.b
+  description: "Ensure mounting of FAT filesystems is disabled"
+  checks:
+    - id: 1.1.1.8.b.1
+      constraints:
+        platform:
+          - rhel7
+      module: vfat
+      steps:
+        - type: shell
+          command: "modprobe -n -v vfat"
+          expect:
+            expected_secure_patterns:
+              - "(?i)FATAL: Module vfat not found"
+              - "(?i)not found in directory"
+              - "install /bin/true"
+            fail_patterns:
+              - "(?i)install /bin/false"
+            on_secure: pass
+            on_insecure: fail
+      remediation: |
+        Edit or create /etc/modprobe.d/vfat.conf and add:
+          install vfat /bin/true
+        Run: rmmod vfat
+      scored: false
+
+- id: 1.1.1.8.c
+  description: "Ensure mounting of FAT filesystems is disabled"
+  checks:
+    - id: 1.1.1.8.c.1
+      constraints:
+        platform:
+          - rhel7
+      module: vfat
+      steps:
+        - type: shell
+          command: "lsmod | grep vfat"
+          expect:
+            must_not_be_loaded: true
+            fail_patterns:
+              - "vfat"
+            on_secure: pass
+            on_insecure: fail
+      remediation: |
+        Edit or create /etc/modprobe.d/vfat.conf and add:
+          install vfat /bin/true
+        Run: rmmod vfat
+      scored: false
