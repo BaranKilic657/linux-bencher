@@ -396,3 +396,2327 @@
           install vfat /bin/true
         Run: rmmod vfat
       scored: false
+- id: 1.1.2
+  description: "Ensure /tmp is configured"
+  prerequisites:
+    - type: file_exists
+      file: /tmp
+      on_fail: fail
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/tmp\\s'"
+      expect:
+        output_contains: "/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "grep -E '\\s/tmp\\s' /etc/fstab | grep -E -v '^\\s*#'"
+      expect:
+        output_contains: "/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Configure /etc/fstab as appropriate.
+    example:
+      tmpfs /tmp tmpfs defaults,rw,nosuid,nodev,noexec,relatime 0 0
+    OR
+    Run the following commands to enable systemd /tmp mounting:
+      systemctl unmask tmp.mount
+      systemctl enable tmp.mount
+      Edit /etc/systemd/system/local-fs.target.wants/tmp.mount
+  scored: true
+
+- id: 1.1.3
+  description: "Ensure nodev option set on /tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/tmp\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to the options for /tmp.
+    Remount with:
+      mount -o remount,nodev /tmp
+  scored: true
+
+- id: 1.1.4
+  description: "Ensure nosuid option set on /tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/tmp\\s' | grep -v nosuid"
+      expect:
+        output_not_contains: "/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nosuid to /tmp options.
+    Remount with:
+      mount -o remount,nosuid /tmp
+  scored: true
+
+- id: 1.1.5
+  description: "Ensure noexec option set on /tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/tmp\\s' | grep -v noexec"
+      expect:
+        output_not_contains: "/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add noexec to /tmp options.
+    Remount with:
+      mount -o remount,noexec /tmp
+  scored: true
+
+- id: 1.1.6
+  description: "Ensure separate partition exists for /var"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var\\s'"
+      expect:
+        output_contains: "/var"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /var during install, or update /etc/fstab and move data.
+  scored: true
+
+- id: 1.1.7
+  description: "Ensure separate partition exists for /var/tmp"
+  steps:
+    - type: shell
+      command: "mount | grep /var/tmp"
+      expect:
+        output_contains: "/var/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /var/tmp during install, or update /etc/fstab and move data.
+  scored: true
+
+- id: 1.1.8
+  description: "Ensure nodev option set on /var/tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var/tmp\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/var/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to the options for /var/tmp.
+    Remount with:
+      mount -o remount,nodev /var/tmp
+  scored: true
+
+- id: 1.1.9
+  description: "Ensure nosuid option set on /var/tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var/tmp\\s' | grep -v nosuid"
+      expect:
+        output_not_contains: "/var/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nosuid to the options for /var/tmp.
+    Remount with:
+      mount -o remount,nosuid /var/tmp
+  scored: true
+
+- id: 1.1.10
+  description: "Ensure noexec option set on /var/tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var/tmp\\s' | grep -v noexec"
+      expect:
+        output_not_contains: "/var/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add noexec to the options for /var/tmp.
+    Remount with:
+      mount -o remount,noexec /var/tmp
+  scored: true
+
+- id: 1.1.11
+  description: "Ensure separate partition exists for /var/log"
+  steps:
+    - type: shell
+      command: "mount | grep /var/log"
+      expect:
+        output_contains: "/var/log"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /var/log during installation,
+    or update /etc/fstab and move existing log data.
+  scored: true
+
+- id: 1.1.12
+  description: "Ensure separate partition exists for /var/log/audit"
+  steps:
+    - type: shell
+      command: "mount | grep /var/log/audit"
+      expect:
+        output_contains: "/var/log/audit"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /var/log/audit during installation,
+    or update /etc/fstab and move existing audit data.
+  scored: true
+
+- id: 1.1.13
+  description: "Ensure separate partition exists for /home"
+  steps:
+    - type: shell
+      command: "mount | grep /home"
+      expect:
+        output_contains: "/home"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /home during installation,
+    or update /etc/fstab and move existing user data.
+  scored: true
+
+- id: 1.1.14
+  description: "Ensure nodev option set on /home partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/home\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/home"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to the options for /home.
+    Remount with:
+      mount -o remount,nodev /home
+  scored: true
+
+- id: 1.1.15
+  description: "Ensure nodev option set on /dev/shm partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/dev/shm"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to the options for /dev/shm.
+    Remount with:
+      mount -o remount,nodev /dev/shm
+  scored: true
+
+- id: 1.1.16
+  description: "Ensure nosuid option set on /dev/shm partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s' | grep -v nosuid"
+      expect:
+        output_not_contains: "/dev/shm"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nosuid to the options for /dev/shm.
+    Remount with:
+      mount -o remount,nosuid /dev/shm
+  scored: true
+
+- id: 1.1.17
+  description: "Ensure noexec option set on /dev/shm partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s' | grep -v noexec"
+      expect:
+        output_not_contains: "/dev/shm"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add noexec to the options for /dev/shm.
+    Remount with:
+      mount -o remount,noexec /dev/shm
+  scored: true
+
+- id: 1.1.18
+  description: "Ensure nodev option set on removable media partitions"
+  steps:
+    - type: manual
+      description: "This check must be reviewed manually. Look for entries in /etc/fstab or mounts with removable media and ensure nodev is set."
+  remediation: |
+    Edit /etc/fstab and add nodev to all removable media partitions (e.g., floppy, cdrom).
+  scored: false
+
+- id: 1.1.19
+  description: "Ensure nosuid option set on removable media partitions"
+  steps:
+    - type: manual
+      description: "This check must be reviewed manually. Look for entries in /etc/fstab or mounts with removable media and ensure nosuid is set."
+  remediation: |
+    Edit /etc/fstab and add nosuid to all removable media partitions (e.g., floppy, cdrom).
+  scored: false
+
+- id: 1.1.20
+  description: "Ensure noexec option set on removable media partitions"
+  steps:
+    - type: manual
+      description: "This check must be reviewed manually. Look for entries in /etc/fstab or mounts with removable media and ensure noexec is set."
+  remediation: |
+    Edit /etc/fstab and add noexec to all removable media partitions (e.g., floppy, cdrom).
+  scored: false
+
+- id: 1.1.21
+  description: "Ensure sticky bit is set on all world-writable directories"
+  steps:
+    - type: shell
+      command: "df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \\( -perm -0002 -a ! -perm -1000 \\) 2>/dev/null | head -n 100"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Run the following command to set the sticky bit on all world-writable directories:
+      df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null | xargs -I '{}' chmod a+t '{}'
+  scored: true
+
+- id: 1.1.22
+  description: "Disable Automounting"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled autofs"
+      expect:
+        expected_secure_patterns:
+          - "disabled"
+        fail_patterns:
+          - "enabled"
+        on_secure: pass
+        on_insecure: fail
+    - type: shell
+      command: "chkconfig --list autofs"
+      expect:
+        expected_secure_patterns:
+          - "autofs 0:off 1:off 2:off 3:off 4:off 5:off 6:off"
+        fail_patterns:
+          - "on"
+        on_secure: pass
+        on_insecure: fail
+    - type: shell
+      command: "ls /etc/rc*.d | grep autofs"
+      expect:
+        output_not_contains: "autofs"
+        case_sensitive: false
+        on_fail: pass   # pass if not found (disabled)
+        on_pass: fail   # fail if found
+  remediation: |
+    Run one of the following commands to disable autofs:
+      chkconfig autofs off
+      systemctl disable autofs
+      update-rc.d autofs disable
+  scored: true
+
+- id: 1.1.23.a
+  description: "Disable USB Storage (modprobe)"
+  prerequisites:
+    - type: binary_exists
+      binary: modprobe
+      on_fail: na
+  module: usb-storage
+  steps:
+    - type: shell
+      command: "modprobe -n -v usb-storage"
+      expect:
+        expected_secure_patterns:
+          - "(?i)FATAL: Module usb-storage not found"
+          - "(?i)not found in directory"
+          - "install /bin/true"
+        fail_patterns:
+          - "(?i)install /bin/false"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/usb-storage.conf and add:
+      install usb-storage /bin/true
+    Run: rmmod usb-storage
+  scored: true
+
+- id: 1.1.23.b
+  description: "Disable USB Storage (lsmod)"
+  prerequisites:
+    - type: binary_exists
+      binary: lsmod
+      on_fail: na
+  module: usb-storage
+  steps:
+    - type: shell
+      command: "lsmod | grep usb-storage"
+      expect:
+        must_not_be_loaded: true
+        fail_patterns:
+          - "usb-storage"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Edit or create /etc/modprobe.d/usb-storage.conf and add:
+      install usb-storage /bin/true
+    Run: rmmod usb-storage
+  scored: true
+- id: 1.2.1
+  description: "Ensure /dev/shm is configured"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s'"
+      expect:
+        output_contains: "/dev/shm"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "grep -E '\\s/dev/shm\\s' /etc/fstab | grep -E -v '^\\s*#'"
+      expect:
+        output_contains: "/dev/shm"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Configure /etc/fstab as appropriate for /dev/shm.
+    Example:
+      tmpfs /dev/shm tmpfs defaults,rw,nosuid,nodev,noexec,relatime 0 0
+  scored: true
+
+- id: 1.2.2
+  description: "Ensure nodev option set on /dev/shm partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/dev/shm"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to /dev/shm mount options.
+    Remount with:
+      mount -o remount,nodev /dev/shm
+  scored: true
+
+- id: 1.2.3
+  description: "Ensure nosuid option set on /dev/shm partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s' | grep -v nosuid"
+      expect:
+        output_not_contains: "/dev/shm"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nosuid to /dev/shm mount options.
+    Remount with:
+      mount -o remount,nosuid /dev/shm
+  scored: true
+
+- id: 1.2.4
+  description: "Ensure noexec option set on /dev/shm partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s' | grep -v noexec"
+      expect:
+        output_not_contains: "/dev/shm"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add noexec to /dev/shm mount options.
+    Remount with:
+      mount -o remount,noexec /dev/shm
+  scored: true
+
+- id: 1.3.1
+  description: "Ensure separate partition exists for /var/tmp"
+  steps:
+    - type: shell
+      command: "mount | grep /var/tmp"
+      expect:
+        output_contains: "/var/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /var/tmp during installation, or update /etc/fstab and move existing data.
+  scored: true
+
+- id: 1.3.2
+  description: "Ensure nodev option set on /var/tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var/tmp\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/var/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to /var/tmp options.
+    Remount with:
+      mount -o remount,nodev /var/tmp
+  scored: true
+
+- id: 1.3.3
+  description: "Ensure nosuid option set on /var/tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var/tmp\\s' | grep -v nosuid"
+      expect:
+        output_not_contains: "/var/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nosuid to /var/tmp options.
+    Remount with:
+      mount -o remount,nosuid /var/tmp
+  scored: true
+
+- id: 1.3.4
+  description: "Ensure noexec option set on /var/tmp partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var/tmp\\s' | grep -v noexec"
+      expect:
+        output_not_contains: "/var/tmp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add noexec to /var/tmp options.
+    Remount with:
+      mount -o remount,noexec /var/tmp
+  scored: true
+
+- id: 1.4.1
+  description: "Ensure nodev option set on /home partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/home\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/home"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to /home options.
+    Remount with:
+      mount -o remount,nodev /home
+  scored: true
+- id: 1.4.2
+  description: "Ensure nosuid option set on /home partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/home\\s' | grep -v nosuid"
+      expect:
+        output_not_contains: "/home"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nosuid to /home options.
+    Remount with:
+      mount -o remount,nosuid /home
+  scored: true
+
+- id: 1.4.3
+  description: "Ensure noexec option set on /home partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/home\\s' | grep -v noexec"
+      expect:
+        output_not_contains: "/home"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add noexec to /home options.
+    Remount with:
+      mount -o remount,noexec /home
+  scored: true
+
+- id: 1.5.1
+  description: "Ensure separate partition exists for /var"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var\\s'"
+      expect:
+        output_contains: "/var"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /var during installation,
+    or update /etc/fstab and move data.
+  scored: true
+
+- id: 1.5.2
+  description: "Ensure nodev option set on /var partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/var"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to /var options.
+    Remount with:
+      mount -o remount,nodev /var
+  scored: true
+
+- id: 1.5.3
+  description: "Ensure nosuid option set on /var partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var\\s' | grep -v nosuid"
+      expect:
+        output_not_contains: "/var"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nosuid to /var options.
+    Remount with:
+      mount -o remount,nosuid /var
+  scored: true
+
+- id: 1.5.4
+  description: "Ensure noexec option set on /var partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var\\s' | grep -v noexec"
+      expect:
+        output_not_contains: "/var"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add noexec to /var options.
+    Remount with:
+      mount -o remount,noexec /var
+  scored: true
+
+- id: 1.6.1
+  description: "Ensure separate partition exists for /var/log"
+  steps:
+    - type: shell
+      command: "mount | grep /var/log"
+      expect:
+        output_contains: "/var/log"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /var/log during installation,
+    or update /etc/fstab and move log data.
+  scored: true
+
+- id: 1.6.2
+  description: "Ensure nodev option set on /var/log partition"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/var/log\\s' | grep -v nodev"
+      expect:
+        output_not_contains: "/var/log"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to /var/log options.
+    Remount with:
+      mount -o remount,nodev /var/log
+  scored: true
+
+- id: 1.7.1
+  description: "Ensure separate partition exists for /var/log/audit"
+  steps:
+    - type: shell
+      command: "mount | grep /var/log/audit"
+      expect:
+        output_contains: "/var/log/audit"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /var/log/audit during installation,
+    or update /etc/fstab and move audit data.
+  scored: true
+
+- id: 1.8.1
+  description: "Ensure separate partition exists for /opt"
+  steps:
+    - type: shell
+      command: "mount | grep /opt"
+      expect:
+        output_contains: "/opt"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /opt during installation,
+    or update /etc/fstab and move /opt data.
+  scored: true
+
+- id: 1.9.1
+  description: "Ensure separate partition exists for /srv"
+  steps:
+    - type: shell
+      command: "mount | grep /srv"
+      expect:
+        output_contains: "/srv"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a separate partition for /srv during installation,
+    or update /etc/fstab and move /srv data.
+  scored: true
+- id: 1.10.1
+  description: "Ensure nodev option set on removable media partitions"
+  steps:
+    - type: manual
+      description: "Manually review all removable media partitions (e.g., floppy, cdrom) and ensure nodev is set in /etc/fstab or via mount options."
+  remediation: |
+    Edit /etc/fstab and add nodev to the options for all removable media partitions (look for entries like floppy, cdrom).
+  scored: false
+
+- id: 1.10.2
+  description: "Ensure nosuid option set on removable media partitions"
+  steps:
+    - type: manual
+      description: "Manually review all removable media partitions (e.g., floppy, cdrom) and ensure nosuid is set in /etc/fstab or via mount options."
+  remediation: |
+    Edit /etc/fstab and add nosuid to the options for all removable media partitions.
+  scored: false
+
+- id: 1.10.3
+  description: "Ensure noexec option set on removable media partitions"
+  steps:
+    - type: manual
+      description: "Manually review all removable media partitions (e.g., floppy, cdrom) and ensure noexec is set in /etc/fstab or via mount options."
+  remediation: |
+    Edit /etc/fstab and add noexec to the options for all removable media partitions.
+  scored: false
+
+- id: 1.11.1
+  description: "Ensure sticky bit is set on all world-writable directories"
+  steps:
+    - type: shell
+      command: "df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \\( -perm -0002 -a ! -perm -1000 \\) 2>/dev/null | head -n 100"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Run the following command to set the sticky bit on all world-writable directories:
+      df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null | xargs -I '{}' chmod a+t '{}'
+  scored: true
+
+- id: 1.12.1
+  description: "Ensure separate partition exists for swap"
+  steps:
+    - type: shell
+      command: "swapon --summary"
+      expect:
+        output_contains: "partition"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create a dedicated partition for swap during installation or convert an existing swap file to a swap partition.
+  scored: true
+
+- id: 1.12.2
+  description: "Ensure swap partition is configured with nodev"
+  steps:
+    - type: shell
+      command: "findmnt --noheadings -o OPTIONS -T /swap | grep nodev"
+      expect:
+        output_contains: "nodev"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev to the swap partition options, then remount swap.
+  scored: true
+
+- id: 1.12.3
+  description: "Ensure swap partition is configured with nosuid"
+  steps:
+    - type: shell
+      command: "findmnt --noheadings -o OPTIONS -T /swap | grep nosuid"
+      expect:
+        output_contains: "nosuid"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nosuid to the swap partition options, then remount swap.
+  scored: true
+
+- id: 1.12.4
+  description: "Ensure swap partition is configured with noexec"
+  steps:
+    - type: shell
+      command: "findmnt --noheadings -o OPTIONS -T /swap | grep noexec"
+      expect:
+        output_contains: "noexec"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add noexec to the swap partition options, then remount swap.
+  scored: true
+
+- id: 1.13.1
+  description: "Ensure no unconfined daemons"
+  steps:
+    - type: shell
+      command: "ps -eZ | grep unconfined_service_t"
+      expect:
+        output_not_contains: "unconfined_service_t"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Investigate and configure proper confinement for daemons running in unconfined contexts.
+  scored: true
+- id: 1.14.1
+  description: "Ensure nodev, nosuid, and noexec options set on /dev/shm"
+  steps:
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s'"
+      expect:
+        output_contains: "nodev"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s'"
+      expect:
+        output_contains: "nosuid"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "mount | grep -E '\\s/dev/shm\\s'"
+      expect:
+        output_contains: "noexec"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/fstab and add nodev, nosuid, and noexec to the /dev/shm mount options.
+    Remount with:
+      mount -o remount,nodev,nosuid,noexec /dev/shm
+  scored: true
+
+- id: 1.15.1
+  description: "Ensure bootloader password is set"
+  steps:
+    - type: shell
+      command: "grep '^password' /boot/grub*/grub.cfg"
+      expect:
+        output_contains: "password"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Set a bootloader password by editing the grub configuration and updating the password hash.
+    Refer to your distribution's GRUB documentation for secure configuration.
+  scored: true
+
+- id: 1.15.2
+  description: "Ensure permissions on bootloader config are configured"
+  steps:
+    - type: shell
+      command: "stat -c %a /boot/grub*/grub.cfg"
+      expect:
+        expected_secure_patterns:
+          - "^600$"
+          - "^400$"
+        fail_patterns:
+          - ".*"
+        on_secure: pass
+        on_insecure: fail
+  remediation: |
+    Set permissions to 600 (or stricter) on grub.cfg:
+      chmod 600 /boot/grub*/grub.cfg
+  scored: true
+
+- id: 1.15.3
+  description: "Ensure authentication required for single user mode"
+  steps:
+    - type: shell
+      command: "grep -E '^(root|single-user)' /etc/shadow"
+      expect:
+        output_not_contains: ":*"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "grep -E '^exec /sbin/sulogin' /usr/lib/systemd/system/rescue.service"
+      expect:
+        output_contains: "exec /sbin/sulogin"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Ensure single-user mode and rescue mode require authentication.
+    Edit /usr/lib/systemd/system/rescue.service and emergency.service, ensure 'ExecStart' includes sulogin.
+  scored: true
+
+- id: 1.16.1
+  description: "Ensure core dumps are restricted"
+  steps:
+    - type: shell
+      command: "sysctl fs.suid_dumpable"
+      expect:
+        output_contains: "fs.suid_dumpable = 0"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "grep -E '^\\s*fs\\.suid_dumpable\\s*=\\s*0' /etc/sysctl.conf /etc/sysctl.d/*"
+      expect:
+        output_contains: "fs.suid_dumpable"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Add or correct fs.suid_dumpable = 0 in /etc/sysctl.conf or an /etc/sysctl.d/ file and run 'sysctl -w fs.suid_dumpable=0'
+  scored: true
+
+- id: 1.17.1
+  description: "Ensure address space layout randomization (ASLR) is enabled"
+  steps:
+    - type: shell
+      command: "sysctl kernel.randomize_va_space"
+      expect:
+        output_contains: "kernel.randomize_va_space = 2"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "grep -E '^\\s*kernel\\.randomize_va_space\\s*=\\s*2' /etc/sysctl.conf /etc/sysctl.d/*"
+      expect:
+        output_contains: "kernel.randomize_va_space"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Add or correct kernel.randomize_va_space = 2 in /etc/sysctl.conf or an /etc/sysctl.d/ file and run 'sysctl -w kernel.randomize_va_space=2'
+  scored: true
+
+- id: 1.18.1
+  description: "Ensure prelink is disabled"
+  steps:
+    - type: shell
+      command: "prelink -c 2>&1 | grep -v 'not found'"
+      expect:
+        output_contains: ""
+        case_sensitive: false
+        on_fail: pass  # pass if prelink not found (not installed)
+        on_pass: fail
+  remediation: |
+    If prelink is installed, uninstall it:
+      yum remove prelink
+      apt remove prelink
+  scored: true
+
+- id: 1.19.1
+  description: "Ensure filesystem integrity is regularly checked"
+  steps:
+    - type: shell
+      command: "crontab -l | grep aide"
+      expect:
+        output_contains: "aide"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "grep -r aide /etc/cron*"
+      expect:
+        output_contains: "aide"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Install and schedule AIDE or a similar file integrity tool via cron or systemd timer.
+  scored: true
+- id: 2.1.1
+  description: "Ensure SSH Protocol is set to 2"
+  steps:
+    - type: shell
+      command: "grep -E '^Protocol\\s+2' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "Protocol 2"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      Protocol 2
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.2
+  description: "Ensure SSH LogLevel is appropriate"
+  steps:
+    - type: shell
+      command: "grep -E '^LogLevel\\s+(INFO|VERBOSE|DEBUG)' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "LogLevel"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      LogLevel INFO
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.3
+  description: "Ensure SSH X11 forwarding is disabled"
+  steps:
+    - type: shell
+      command: "grep -E '^X11Forwarding\\s+no' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "X11Forwarding no"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      X11Forwarding no
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.4
+  description: "Ensure SSH MaxAuthTries is set to 4 or less"
+  steps:
+    - type: shell
+      command: "grep -E '^MaxAuthTries\\s+[1-4]' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "MaxAuthTries"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      MaxAuthTries 4
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.5
+  description: "Ensure SSH IgnoreRhosts is enabled"
+  steps:
+    - type: shell
+      command: "grep -E '^IgnoreRhosts\\s+yes' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "IgnoreRhosts yes"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      IgnoreRhosts yes
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.6
+  description: "Ensure SSH HostbasedAuthentication is disabled"
+  steps:
+    - type: shell
+      command: "grep -E '^HostbasedAuthentication\\s+no' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "HostbasedAuthentication no"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      HostbasedAuthentication no
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.7
+  description: "Ensure SSH root login is disabled"
+  steps:
+    - type: shell
+      command: "grep -E '^PermitRootLogin\\s+no' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "PermitRootLogin no"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      PermitRootLogin no
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.8
+  description: "Ensure SSH PermitEmptyPasswords is disabled"
+  steps:
+    - type: shell
+      command: "grep -E '^PermitEmptyPasswords\\s+no' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "PermitEmptyPasswords no"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      PermitEmptyPasswords no
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.9
+  description: "Ensure SSH PermitUserEnvironment is disabled"
+  steps:
+    - type: shell
+      command: "grep -E '^PermitUserEnvironment\\s+no' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "PermitUserEnvironment no"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      PermitUserEnvironment no
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.10
+  description: "Ensure SSH Idle Timeout Interval is configured"
+  steps:
+    - type: shell
+      command: "grep -E '^ClientAliveInterval\\s+[0-9]+' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "ClientAliveInterval"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "grep -E '^ClientAliveCountMax\\s+[0-9]+' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "ClientAliveCountMax"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      ClientAliveInterval 300
+      ClientAliveCountMax 0
+    Restart sshd after change.
+  scored: true
+- id: 2.1.11
+  description: "Ensure SSH LoginGraceTime is set to 60 seconds or less"
+  steps:
+    - type: shell
+      command: "grep -E '^LoginGraceTime\\s+([1-9]|[1-5][0-9]|60)' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "LoginGraceTime"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      LoginGraceTime 60
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.12
+  description: "Ensure SSH warning banner is configured"
+  steps:
+    - type: shell
+      command: "grep -E '^Banner\\s+/etc/issue.net' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "Banner /etc/issue.net"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "test -f /etc/issue.net"
+      expect:
+        output_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      Banner /etc/issue.net
+    Create and populate /etc/issue.net with an appropriate legal warning.
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.13
+  description: "Ensure SSH PAM is enabled"
+  steps:
+    - type: shell
+      command: "grep -E '^UsePAM\\s+yes' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "UsePAM yes"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      UsePAM yes
+    Restart sshd after change.
+  scored: true
+
+- id: 2.1.14
+  description: "Ensure SSH AllowTcpForwarding is disabled"
+  steps:
+    - type: shell
+      command: "grep -E '^AllowTcpForwarding\\s+no' /etc/ssh/sshd_config"
+      expect:
+        output_contains: "AllowTcpForwarding no"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/ssh/sshd_config and set:
+      AllowTcpForwarding no
+    Restart sshd after change.
+  scored: true
+
+- id: 2.2.1
+  description: "Ensure password expiration is 365 days or less"
+  steps:
+    - type: shell
+      command: "grep -E '^PASS_MAX_DAYS\\s+([1-9]|[1-9][0-9]{1,2}|[1-2][0-9]{3}|3[0-5][0-9]{2}|36[0-5])' /etc/login.defs"
+      expect:
+        output_contains: "PASS_MAX_DAYS"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/login.defs and set:
+      PASS_MAX_DAYS 365
+  scored: true
+
+- id: 2.2.2
+  description: "Ensure minimum days between password changes is 7 or more"
+  steps:
+    - type: shell
+      command: "grep -E '^PASS_MIN_DAYS\\s+([7-9]|[1-9][0-9]+)' /etc/login.defs"
+      expect:
+        output_contains: "PASS_MIN_DAYS"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/login.defs and set:
+      PASS_MIN_DAYS 7
+  scored: true
+
+- id: 2.2.3
+  description: "Ensure password expiration warning days is 7 or more"
+  steps:
+    - type: shell
+      command: "grep -E '^PASS_WARN_AGE\\s+([7-9]|[1-9][0-9]+)' /etc/login.defs"
+      expect:
+        output_contains: "PASS_WARN_AGE"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/login.defs and set:
+      PASS_WARN_AGE 7
+  scored: true
+
+- id: 2.2.4
+  description: "Ensure inactive password lock is 30 days or less"
+  steps:
+    - type: shell
+      command: "grep -E '^INACTIVE\\s+([1-9]|[1-2][0-9]|30)' /etc/default/useradd"
+      expect:
+        output_contains: "INACTIVE"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/default/useradd and set:
+      INACTIVE 30
+  scored: true
+
+- id: 2.2.5
+  description: "Ensure all users have passwords"
+  steps:
+    - type: shell
+      command: "awk -F: '($2 == \"\" ) { print $1 }' /etc/shadow"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Investigate all users listed by the check and assign secure passwords.
+  scored: true
+
+- id: 2.2.6
+  description: "Ensure root is the only UID 0 account"
+  steps:
+    - type: shell
+      command: "awk -F: '($3 == 0) { print $1 }' /etc/passwd"
+      expect:
+        output_contains: "root"
+        output_not_contains: "\n.*"  # Should only be "root", nothing else
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Investigate and remove any non-root accounts with UID 0.
+  scored: true
+- id: 2.2.7
+  description: "Ensure users' home directories exist"
+  steps:
+    - type: shell
+      command: "awk -F: '($3 >= 1000 && $7 != \"/usr/sbin/nologin\" && $7 != \"/bin/false\") { print $1 \":\" $6 }' /etc/passwd | while IFS=\":\" read user home; do [ -d \"$home\" ] || echo $user; done"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Create missing home directories for users listed.
+  scored: true
+
+- id: 2.2.8
+  description: "Ensure users own their home directories"
+  steps:
+    - type: shell
+      command: "awk -F: '($3 >= 1000 && $7 != \"/usr/sbin/nologin\" && $7 != \"/bin/false\") { print $1 \":\" $6 }' /etc/passwd | while IFS=\":\" read user home; do [ -d \"$home\" ] && [ \"$(stat -c '%U' \"$home\")\" != \"$user\" ] && echo $user; done"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Change ownership of listed home directories to their respective users.
+  scored: true
+
+- id: 2.2.9
+  description: "Ensure users' home directories permissions are 750 or more restrictive"
+  steps:
+    - type: shell
+      command: "awk -F: '($3 >= 1000 && $7 != \"/usr/sbin/nologin\" && $7 != \"/bin/false\") { print $6 }' /etc/passwd | while read home; do [ -d \"$home\" ] && [ $(stat -c \"%a\" \"$home\") -gt 750 ] && echo $home; done"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Set permissions of home directories listed to 750 or stricter.
+      chmod 750 <homedir>
+  scored: true
+
+- id: 2.2.10
+  description: "Ensure no users have .forward files"
+  steps:
+    - type: shell
+      command: "find /home -type f -name .forward"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Remove .forward files from user home directories.
+  scored: true
+
+- id: 2.2.11
+  description: "Ensure no users have .netrc files"
+  steps:
+    - type: shell
+      command: "find /home -type f -name .netrc"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Remove .netrc files from user home directories.
+  scored: true
+
+- id: 2.2.12
+  description: "Ensure no users have .rhosts files"
+  steps:
+    - type: shell
+      command: "find /home -type f -name .rhosts"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Remove .rhosts files from user home directories.
+  scored: true
+
+- id: 2.2.13
+  description: "Ensure root's PATH integrity"
+  steps:
+    - type: shell
+      command: "echo $PATH | grep -q '::\\|:$'"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: pass
+        on_pass: fail
+    - type: shell
+      command: "IFS=':'; for dir in $PATH; do [ -d \"$dir\" ] || echo $dir; done"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "IFS=':'; for dir in $PATH; do ls -ld \"$dir\" | grep -E '^(drwxr-xr-x|drwxrwxr-x)' || echo $dir; done"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Remove '.' and empty entries from root's PATH.
+    Ensure all PATH directories exist and are not group- or world-writable.
+  scored: true
+
+- id: 2.3.1
+  description: "Ensure sudo is installed"
+  steps:
+    - type: shell
+      command: "command -v sudo"
+      expect:
+        output_contains: "sudo"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Install sudo with your package manager.
+      apt install sudo
+      yum install sudo
+  scored: true
+
+- id: 2.3.2
+  description: "Ensure sudo commands use pty"
+  steps:
+    - type: shell
+      command: "grep -E '^Defaults\\s+use_pty' /etc/sudoers /etc/sudoers.d/*"
+      expect:
+        output_contains: "Defaults use_pty"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/sudoers or /etc/sudoers.d/* and ensure:
+      Defaults use_pty
+  scored: true
+
+- id: 2.3.3
+  description: "Ensure sudo log file exists and is configured"
+  steps:
+    - type: shell
+      command: "grep -E '^Defaults\\s+logfile=' /etc/sudoers /etc/sudoers.d/*"
+      expect:
+        output_contains: "logfile="
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "awk -F= '/^Defaults\\s+logfile=/ {print $2}' /etc/sudoers /etc/sudoers.d/* | xargs -I{} test -f {}"
+      expect:
+        output_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/sudoers or /etc/sudoers.d/* and set:
+      Defaults logfile="/var/log/sudo.log"
+    Ensure /var/log/sudo.log exists and is writable by root only.
+  scored: true
+- id: 2.3.4
+  description: "Ensure re-authentication for privilege escalation is required"
+  steps:
+    - type: shell
+      command: "grep -E '^Defaults\\s+timestamp_timeout=' /etc/sudoers /etc/sudoers.d/*"
+      expect:
+        output_contains: "timestamp_timeout=0"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/sudoers or /etc/sudoers.d/* and set:
+      Defaults timestamp_timeout=0
+  scored: true
+
+- id: 2.3.5
+  description: "Ensure sudo access is limited to authorized users"
+  steps:
+    - type: shell
+      command: "grep -Po '^%sudo\\s+ALL=\\(ALL:ALL\\)\\s+ALL' /etc/sudoers /etc/sudoers.d/*"
+      expect:
+        output_contains: "%sudo"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "getent group sudo"
+      expect:
+        output_contains: "sudo"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Restrict sudoers to the sudo group and ensure only trusted users are members.
+  scored: true
+
+- id: 2.4.1
+  description: "Ensure no duplicate UIDs exist"
+  steps:
+    - type: shell
+      command: "cut -f3 -d: /etc/passwd | sort | uniq -d"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Investigate and correct duplicate UIDs in /etc/passwd.
+  scored: true
+
+- id: 2.4.2
+  description: "Ensure no duplicate GIDs exist"
+  steps:
+    - type: shell
+      command: "cut -f3 -d: /etc/group | sort | uniq -d"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Investigate and correct duplicate GIDs in /etc/group.
+  scored: true
+
+- id: 2.4.3
+  description: "Ensure no duplicate user names exist"
+  steps:
+    - type: shell
+      command: "cut -f1 -d: /etc/passwd | sort | uniq -d"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Investigate and correct duplicate user names in /etc/passwd.
+  scored: true
+
+- id: 2.4.4
+  description: "Ensure no duplicate group names exist"
+  steps:
+    - type: shell
+      command: "cut -f1 -d: /etc/group | sort | uniq -d"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Investigate and correct duplicate group names in /etc/group.
+  scored: true
+
+- id: 2.4.5
+  description: "Ensure shadow group is empty"
+  steps:
+    - type: shell
+      command: "getent group shadow | awk -F: '{print $4}'"
+      expect:
+        output_not_contains: "[a-zA-Z0-9]"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Remove all users from the shadow group except root/system accounts as necessary.
+  scored: true
+
+- id: 2.5.1
+  description: "Ensure all groups in /etc/passwd exist in /etc/group"
+  steps:
+    - type: shell
+      command: "awk -F: '{print $4}' /etc/passwd | while read gid; do getent group $gid > /dev/null || echo $gid; done"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Investigate and correct any missing group entries for GIDs listed.
+  scored: true
+
+- id: 2.6.1
+  description: "Ensure root PATH integrity"
+  steps:
+    - type: shell
+      command: "echo $PATH | grep -q '::\\|:$'"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: pass
+        on_pass: fail
+    - type: shell
+      command: "IFS=':'; for dir in $PATH; do [ -d \"$dir\" ] || echo $dir; done"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "IFS=':'; for dir in $PATH; do ls -ld \"$dir\" | grep -E '^(drwxr-xr-x|drwxrwxr-x)' || echo $dir; done"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Remove '.' and empty entries from root's PATH.
+    Ensure all PATH directories exist and are not group- or world-writable.
+  scored: true
+
+- id: 2.7.1
+  description: "Ensure only root has UID 0"
+  steps:
+    - type: shell
+      command: "awk -F: '($3 == 0) { print $1 }' /etc/passwd | grep -v root"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Remove any user other than root with UID 0, or change their UID to a non-privileged value.
+  scored: true
+- id: 3.1.1
+  description: "Ensure chargen services are not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled chargen-dgram.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "systemctl is-enabled chargen-stream.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable chargen-dgram.socket and chargen-stream.socket if present.
+      systemctl disable chargen-dgram.socket
+      systemctl disable chargen-stream.socket
+  scored: true
+
+- id: 3.1.2
+  description: "Ensure daytime services are not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled daytime-dgram.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "systemctl is-enabled daytime-stream.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable daytime-dgram.socket and daytime-stream.socket if present.
+      systemctl disable daytime-dgram.socket
+      systemctl disable daytime-stream.socket
+  scored: true
+
+- id: 3.1.3
+  description: "Ensure discard services are not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled discard-dgram.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "systemctl is-enabled discard-stream.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable discard-dgram.socket and discard-stream.socket if present.
+      systemctl disable discard-dgram.socket
+      systemctl disable discard-stream.socket
+  scored: true
+
+- id: 3.1.4
+  description: "Ensure echo services are not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled echo-dgram.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "systemctl is-enabled echo-stream.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable echo-dgram.socket and echo-stream.socket if present.
+      systemctl disable echo-dgram.socket
+      systemctl disable echo-stream.socket
+  scored: true
+
+- id: 3.1.5
+  description: "Ensure time services are not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled time-dgram.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "systemctl is-enabled time-stream.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable time-dgram.socket and time-stream.socket if present.
+      systemctl disable time-dgram.socket
+      systemctl disable time-stream.socket
+  scored: true
+
+- id: 3.1.6
+  description: "Ensure tftp server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled tftp.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable tftp.socket if present.
+      systemctl disable tftp.socket
+  scored: true
+
+- id: 3.1.7
+  description: "Ensure xinetd is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled xinetd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable xinetd if present.
+      systemctl disable xinetd
+  scored: true
+
+- id: 3.2.1
+  description: "Ensure openbsd-inetd is not installed"
+  steps:
+    - type: shell
+      command: "dpkg -l | grep openbsd-inetd || rpm -q openbsd-inetd || echo not_installed"
+      expect:
+        output_contains: "not_installed"
+        case_sensitive: false
+        on_fail: pass   # If not installed, pass
+        on_pass: fail
+  remediation: |
+    Remove openbsd-inetd if installed.
+      apt purge openbsd-inetd
+      yum remove openbsd-inetd
+  scored: true
+
+- id: 3.2.2
+  description: "Ensure xinetd is not installed"
+  steps:
+    - type: shell
+      command: "dpkg -l | grep xinetd || rpm -q xinetd || echo not_installed"
+      expect:
+        output_contains: "not_installed"
+        case_sensitive: false
+        on_fail: pass
+        on_pass: fail
+  remediation: |
+    Remove xinetd if installed.
+      apt purge xinetd
+      yum remove xinetd
+  scored: true
+
+- id: 3.3.1
+  description: "Ensure Avahi Server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled avahi-daemon 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable avahi-daemon if present.
+      systemctl disable avahi-daemon
+  scored: true
+- id: 3.3.2
+  description: "Ensure CUPS is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled cups 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable CUPS if present.
+      systemctl disable cups
+  scored: true
+
+- id: 3.3.3
+  description: "Ensure DHCP Server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled isc-dhcp-server 2>/dev/null || systemctl is-enabled dhcpd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable DHCP server if present.
+      systemctl disable isc-dhcp-server
+      systemctl disable dhcpd
+  scored: true
+
+- id: 3.3.4
+  description: "Ensure LDAP server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled slapd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable slapd if present.
+      systemctl disable slapd
+  scored: true
+
+- id: 3.3.5
+  description: "Ensure NFS and RPC are not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled nfs 2>/dev/null || systemctl is-enabled nfs-server 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "systemctl is-enabled rpcbind 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable nfs, nfs-server, and rpcbind if present.
+      systemctl disable nfs
+      systemctl disable nfs-server
+      systemctl disable rpcbind
+  scored: true
+
+- id: 3.3.6
+  description: "Ensure DNS Server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled named 2>/dev/null || systemctl is-enabled bind9 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable named/bind9 if present.
+      systemctl disable named
+      systemctl disable bind9
+  scored: true
+
+- id: 3.3.7
+  description: "Ensure FTP Server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled vsftpd 2>/dev/null || systemctl is-enabled proftpd 2>/dev/null || systemctl is-enabled pure-ftpd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable vsftpd, proftpd, or pure-ftpd if present.
+      systemctl disable vsftpd
+      systemctl disable proftpd
+      systemctl disable pure-ftpd
+  scored: true
+
+- id: 3.3.8
+  description: "Ensure HTTP server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled apache2 2>/dev/null || systemctl is-enabled httpd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable apache2 or httpd if present.
+      systemctl disable apache2
+      systemctl disable httpd
+  scored: true
+
+- id: 3.3.9
+  description: "Ensure IMAP and POP3 server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled dovecot 2>/dev/null || systemctl is-enabled courier-imap 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable dovecot or courier-imap if present.
+      systemctl disable dovecot
+      systemctl disable courier-imap
+  scored: true
+
+- id: 3.3.10
+  description: "Ensure Samba is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled smbd 2>/dev/null || systemctl is-enabled nmbd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable smbd or nmbd if present.
+      systemctl disable smbd
+      systemctl disable nmbd
+  scored: true
+
+- id: 3.3.11
+  description: "Ensure HTTP Proxy Server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled squid 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable squid if present.
+      systemctl disable squid
+  scored: true
+- id: 3.3.12
+  description: "Ensure SNMP Server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled snmpd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable snmpd if present.
+      systemctl disable snmpd
+  scored: true
+
+- id: 3.3.13
+  description: "Ensure mail transfer agent is configured for local-only mode"
+  steps:
+    - type: shell
+      command: "netstat -tuln | grep :25 | grep -v 127.0.0.1"
+      expect:
+        output_not_contains: ":25"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Configure your MTA (postfix, sendmail, etc.) to only listen on 127.0.0.1 (localhost).
+  scored: true
+
+- id: 3.3.14
+  description: "Ensure NIS Server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled ypserv 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable ypserv if present.
+      systemctl disable ypserv
+  scored: true
+
+- id: 3.3.15
+  description: "Ensure NIS Client is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled ypbind 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable ypbind if present.
+      systemctl disable ypbind
+  scored: true
+
+- id: 3.3.16
+  description: "Ensure rsh server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled rsh.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "systemctl is-enabled rshd.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable rsh and rshd sockets if present.
+      systemctl disable rsh.socket
+      systemctl disable rshd.socket
+  scored: true
+
+- id: 3.3.17
+  description: "Ensure talk server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled talk.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "systemctl is-enabled ntalk.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable talk and ntalk sockets if present.
+      systemctl disable talk.socket
+      systemctl disable ntalk.socket
+  scored: true
+
+- id: 3.3.18
+  description: "Ensure telnet server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled telnet.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable telnet.socket if present.
+      systemctl disable telnet.socket
+  scored: true
+
+- id: 3.3.19
+  description: "Ensure tftp server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled tftp.socket 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable tftp.socket if present.
+      systemctl disable tftp.socket
+  scored: true
+
+- id: 3.3.20
+  description: "Ensure rsync service is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled rsyncd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable rsyncd if present.
+      systemctl disable rsyncd
+  scored: true
+
+- id: 3.3.21
+  description: "Ensure NFS server is not enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled nfs-server 2>/dev/null || systemctl is-enabled nfs 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "disabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Disable nfs-server or nfs if present.
+      systemctl disable nfs-server
+      systemctl disable nfs
+  scored: true
+- id: 4.1.1
+  description: "Ensure rsyslog is installed"
+  steps:
+    - type: shell
+      command: "command -v rsyslogd"
+      expect:
+        output_contains: "rsyslogd"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Install rsyslog with your package manager.
+      apt install rsyslog
+      yum install rsyslog
+  scored: true
+
+- id: 4.1.2
+  description: "Ensure rsyslog Service is enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled rsyslog 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "enabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Enable and start rsyslog.
+      systemctl enable rsyslog
+      systemctl start rsyslog
+  scored: true
+
+- id: 4.1.3
+  description: "Ensure rsyslog default file permissions configured"
+  steps:
+    - type: shell
+      command: "grep -E '^\\$FileCreateMode\\s+0?640' /etc/rsyslog.conf /etc/rsyslog.d/*"
+      expect:
+        output_contains: "$FileCreateMode"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Set $FileCreateMode 0640 in /etc/rsyslog.conf or /etc/rsyslog.d/.
+    Restart rsyslog after change.
+  scored: true
+
+- id: 4.1.4
+  description: "Ensure rsyslog is configured to send logs to a remote log host"
+  steps:
+    - type: shell
+      command: "grep -E '@@?[^ ]+' /etc/rsyslog.conf /etc/rsyslog.d/*"
+      expect:
+        output_contains: "@"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Configure a remote syslog server in /etc/rsyslog.conf or /etc/rsyslog.d/.
+    E.g.: *.* @@loghost.example.com
+    Restart rsyslog after change.
+  scored: true
+
+- id: 4.1.5
+  description: "Ensure remote rsyslog messages are only accepted on designated log hosts"
+  steps:
+    - type: shell
+      command: "grep -E 'ModLoad imtcp' /etc/rsyslog.conf /etc/rsyslog.d/*"
+      expect:
+        output_contains: "ModLoad imtcp"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+    - type: shell
+      command: "grep -E 'InputTCPServerRun' /etc/rsyslog.conf /etc/rsyslog.d/*"
+      expect:
+        output_contains: "InputTCPServerRun"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Enable TCP input only on designated log hosts.
+      Add to rsyslog.conf:
+        $ModLoad imtcp
+        $InputTCPServerRun 514
+    Restrict source IPs via firewall.
+  scored: true
+
+- id: 4.2.1
+  description: "Ensure journald is configured to write logfiles to persistent disk"
+  steps:
+    - type: shell
+      command: "grep -E '^Storage=persistent' /etc/systemd/journald.conf"
+      expect:
+        output_contains: "Storage=persistent"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Edit /etc/systemd/journald.conf and set:
+      Storage=persistent
+    Restart systemd-journald after change.
+  scored: true
+
+- id: 4.2.2
+  description: "Ensure permissions on all logfiles are configured"
+  steps:
+    - type: shell
+      command: "find /var/log -type f -exec stat -c '%n %a' {} \\; | awk '$2 > 640 { print $1 }'"
+      expect:
+        output_not_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Set log file permissions in /var/log to 640 or stricter:
+      chmod 640 <file>
+  scored: true
+
+- id: 4.2.3
+  description: "Ensure logrotate is configured"
+  steps:
+    - type: shell
+      command: "test -f /etc/logrotate.conf"
+      expect:
+        output_contains: ""
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Install and configure logrotate.
+      apt install logrotate
+      yum install logrotate
+    Edit /etc/logrotate.conf as needed.
+  scored: true
+
+- id: 4.3.1
+  description: "Ensure auditd is installed"
+  steps:
+    - type: shell
+      command: "command -v auditd"
+      expect:
+        output_contains: "auditd"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Install auditd with your package manager.
+      apt install auditd
+      yum install auditd
+  scored: true
+
+- id: 4.3.2
+  description: "Ensure auditd service is enabled"
+  steps:
+    - type: shell
+      command: "systemctl is-enabled auditd 2>/dev/null || echo disabled"
+      expect:
+        output_contains: "enabled"
+        case_sensitive: false
+        on_fail: fail
+        on_pass: pass
+  remediation: |
+    Enable and start auditd.
+      systemctl enable auditd
+      systemctl start auditd
+  scored: true
